@@ -6,6 +6,17 @@
 </head>
 
 <body>
+    {% if messages %}
+    {% for message in messages %}
+    <p> {{message}}</p>
+    {% endfor %}
+    {% endif %}
+
+    {% if user.is_authenticated %}
+    <p> Hii ,{{user.username}}</P>
+    {% endif %}
+
+    <a href="{% url "logout" %}" class="text-red-500">Logout</a>
 <h1 class="text-red-500" > Hello Home </h1>
 <p class="text-blue-600" >Hello k xa </p>
 </body>

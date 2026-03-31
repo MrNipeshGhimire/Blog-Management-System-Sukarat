@@ -26,6 +26,8 @@ def register_method(request):
 
         if not password:
             errors['password'] = "Password enter gara"
+        elif len(password)<= 8:
+            errors['password'] = "Password must more than 8 characters"
         
         if not confirm_password:
             errors['confirm_password'] = "Confirm password is required"
@@ -47,28 +49,64 @@ def register_method(request):
             
     return render(request,'auth/register.html')
 
+# =====login using username ==============
+# def login_method(request):
+#     errors = {}
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
 
+#        # validation 
+#         if not username:
+#            errors['username'] = "Username is required"
+#         elif not User.objects.filter(username=username).exists():
+#             errors['username'] = "Username does not exists"
+
+#         if not password:
+#            errors['password'] = "Password is required"
+        
+        
+#         if errors:
+#            return render(request,'auth/login.html',{'error':errors,'data':request.POST})
+#         else:
+#             # if there is not any errors
+#             # authenticate() => username and password check graxa 
+#             user = authenticate(request,username=username,password=password)
+#             if user is not None:
+#                 login(request,user)  # session generate garxa 
+#                 messages.success(request,"User logged in successfully !! ")
+#                 return redirect('index')
+#             else:
+#                 messages.error(request,'Incorrect Password')
+#                 return redirect('login')
+                
+#     return render(request,'auth/login.html')
+
+#============= login using email====================
 def login_method(request):
     errors = {}
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
        # validation 
-        if not username:
-           errors['username'] = "Username is required"
-        elif not User.objects.filter(username=username).exists():
-            errors['username'] = "Username does not exists"
+        if not email:
+           errors['email'] = "Email is required"
+        elif not User.objects.filter(email=email).exists():
+            errors['email'] = "Email does not exists"
 
         if not password:
            errors['password'] = "Password is required"
+        
         
         if errors:
            return render(request,'auth/login.html',{'error':errors,'data':request.POST})
         else:
             # if there is not any errors
             # authenticate() => username and password check graxa 
-            user = authenticate(request,username=username,password=password)
+            check_user = User.objects.get(email=email)
+            print("hello",check_user.username) 
+            user = authenticate(request,username=check_user.username,password=password)
             if user is not None:
                 login(request,user)  # session generate garxa 
                 messages.success(request,"User logged in successfully !! ")
@@ -80,9 +118,11 @@ def login_method(request):
     return render(request,'auth/login.html')
 
 
+
 def logout_method(request):
-    logout(request)
+    logout(request)   # logout() method le logout garxa || session lai destroy garxa
     messages.success(request,'Logout Successfully !!')
     return redirect('index')
+
 
 

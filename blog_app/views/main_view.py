@@ -60,3 +60,20 @@ def single_method(request,id):
     blog = get_object_or_404(Blog,id=id)
     print(blog)
     return render(request,'main/single_page.html',{'blog':blog})
+
+
+# for implement delete operation
+def delete_blog(request,id):
+    blog = Blog.objects.get(id=id)
+    # check if the user is the owner of blog or not
+    if blog.added_by == request.user:
+        blog.delete()
+        messages.success(request,"Blog deleted successfully")
+        return redirect('index')
+    else:
+        messages.error(request,'You are not authorize to delete this blog !!')
+        return redirect('single',id=id)
+    
+    
+
+

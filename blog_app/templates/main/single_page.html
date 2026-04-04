@@ -8,6 +8,28 @@
 <body>
  {% include "components/_navbar.html" %}
 <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white rounded-lg shadow-md mt-10">
+ {% if messages %}
+  <div class="space-y-4 mb-6">
+    {% for message in messages %}
+      <div 
+        class="px-4 py-3 rounded-lg text-white text-sm font-medium shadow-md
+        {% if message.tags == 'success' %}
+          bg-green-500
+        {% elif message.tags == 'error' %}
+          bg-red-500
+        {% elif message.tags == 'warning' %}
+          bg-yellow-500 text-black
+        {% else %}
+          bg-blue-500
+        {% endif %}
+        ">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+  
+
   <!-- Blog Image -->
    {% if blog.image %}
     <img src="{{blog.image.url}}" alt="{{blog.image}}" class="w-full rounded-lg object-cover mb-8 max-h-96">
@@ -31,7 +53,9 @@
     
     <!-- More paragraphs as needed -->
   </article>
-
+ <div class="flex flex-wrap gap-4 text-sm text-gray-500 mb-8">
+    <p><strong>Posted by</strong> {{blog.added_by}}</p>
+  </div>
   <!-- Action Buttons -->
   <div class="flex space-x-4">
     <button
@@ -40,13 +64,14 @@
     >
       Edit
     </button>
-    <button
-      type="button"
+    <a href="/delete/{{blog.id}}/"
+      type="button" onclick="return confirm('Are you sure want to delete this blog ?')"
       class="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
     >
       Delete
-    </button>
+  </a>
   </div>
+ 
 </section>
 {% include "components/_footer.html" %}
 </body>

@@ -74,6 +74,56 @@ def delete_blog(request,id):
         messages.error(request,'You are not authorize to delete this blog !!')
         return redirect('single',id=id)
     
-    
 
 
+def edit_blog(request, id):
+    blog = get_object_or_404(Blog, id=id)
+
+    # Authorization check
+    if blog.added_by != request.user:
+        messages.error(request, 'You are not authorized to edit this blog!')
+        return redirect('single', id=id)
+
+    if request.method == 'POST':
+        errors = {}
+
+        title = request.POST.get('title')
+        category = request.POST.get('category')
+        description = request.POST.get('description')
+        image = request.FILES.get('image')
+
+        # Validation
+        if not title:
+            errors['title'] = "Title is required"
+        
+        if not category:
+            errors['category'] = "Category is required"
+
+        if errors:
+            return render(request, 'main/edit_blog.html', {
+                'errors': errors,
+                'prev_data': {
+                    'title': title,
+                    'category': category,
+                    'description': description,
+                    'image': blog.image   # keep old image
+                }
+            })
+
+        # Update blog
+        blog.title = title
+        blog.category = category
+        blog.description = description
+
+        if image:
+            blog.image = image  # replace only if new image uploaded
+
+        blog.save()
+
+        messages.success(request, 'Blog updated successfully')
+        return redirect('single', id=id)
+
+    # GET request
+    return render(request, 'main/edit_blog.html', {
+        'prev_data': blog
+    })
